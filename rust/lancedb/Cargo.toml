@@ -40,7 +40,7 @@ lance-datafusion.workspace = true
 lance-datagen = { workspace = true }
 lance-file = { workspace = true }
 lance-io = { workspace = true }
-lance-index = { workspace = true, features = ["tokenizer-jieba", "tokenizer-lindera"] }
+lance-index = { workspace = true }
 lance-table = { workspace = true }
 lance-linalg = { workspace = true }
 lance-testing = { workspace = true }
@@ -109,6 +109,13 @@ serial_test = "3"
 
 [features]
 default = []
+# Full-text-search CJK tokenizers. These are off by default because they pull in
+# the lindera/jieba dictionary stack (lindera-dictionary, daachorse, rkyv,
+# cedarwood, ...), which is a significant compile-time cost. Enable them (or the
+# `tokenizer-cjk` bundle) if you need CJK segmentation for full-text search.
+tokenizer-jieba = ["lance-index/tokenizer-jieba"]
+tokenizer-lindera = ["lance-index/tokenizer-lindera"]
+tokenizer-cjk = ["tokenizer-jieba", "tokenizer-lindera"]
 aws = [
     "lance/aws",
     "lance-io/aws",
