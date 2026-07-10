@@ -7,12 +7,16 @@ pub use arrow_schema;
 use datafusion_common::DataFusionError;
 use datafusion_physical_plan::stream::RecordBatchStreamAdapter;
 use futures::{Stream, StreamExt, TryStreamExt};
+#[cfg(any(test, feature = "test-utils"))]
 use lance_datagen::{BatchCount, BatchGeneratorBuilder, RowCount};
+
+#[cfg(any(test, feature = "test-utils"))]
+use crate::Error;
 
 #[cfg(feature = "polars")]
 use {crate::polars_arrow_convertors, polars::frame::ArrowChunk, polars::prelude::DataFrame};
 
-use crate::{Error, error::Result};
+use crate::error::Result;
 
 /// An iterator of batches that also has a schema
 pub trait RecordBatchReader: Iterator<Item = Result<arrow_array::RecordBatch>> {
@@ -160,6 +164,7 @@ impl IntoArrowStream for datafusion_physical_plan::SendableRecordBatchStream {
     }
 }
 
+#[cfg(any(test, feature = "test-utils"))]
 pub trait LanceDbDatagenExt {
     fn into_ldb_stream(
         self,
@@ -168,6 +173,7 @@ pub trait LanceDbDatagenExt {
     ) -> SendableRecordBatchStream;
 }
 
+#[cfg(any(test, feature = "test-utils"))]
 impl LanceDbDatagenExt for BatchGeneratorBuilder {
     fn into_ldb_stream(
         self,

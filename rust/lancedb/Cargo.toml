@@ -37,13 +37,13 @@ lazy_static.workspace = true
 lance = { workspace = true }
 lance-core = { workspace = true }
 lance-datafusion.workspace = true
-lance-datagen = { workspace = true }
+lance-datagen = { workspace = true, optional = true }
 lance-file = { workspace = true }
 lance-io = { workspace = true }
 lance-index = { workspace = true }
 lance-table = { workspace = true }
 lance-linalg = { workspace = true }
-lance-testing = { workspace = true }
+lance-testing = { workspace = true, optional = true }
 lance-encoding = { workspace = true }
 lance-arrow = { workspace = true }
 lance-namespace = { workspace = true }
@@ -92,6 +92,11 @@ semver = { workspace = true }
 [dev-dependencies]
 anyhow = "1"
 tempfile = "3.5.0"
+# Also declared as optional runtime deps gated behind the `test-utils` feature;
+# listed here (unconditionally) so the crate's own test suite builds without
+# needing `--features test-utils`.
+lance-datagen = { workspace = true }
+lance-testing = { workspace = true }
 random_word = { version = "0.4.3", features = ["en"] }
 uuid = { version = "1.7.0", features = ["v4"] }
 walkdir = "2"
@@ -116,6 +121,12 @@ default = []
 tokenizer-jieba = ["lance-index/tokenizer-jieba"]
 tokenizer-lindera = ["lance-index/tokenizer-lindera"]
 tokenizer-cjk = ["tokenizer-jieba", "tokenizer-lindera"]
+# Exposes the `test_utils` module and datagen helpers (e.g. `LanceDbDatagenExt`)
+# for downstream test code. Pulls in `lance-datagen` and `lance-testing`, which
+# drag in synthetic data generators (random_word word lists, etc.) that should
+# not land in production binaries. The crate's own tests enable these via
+# dev-dependencies, so this feature is only needed by external consumers.
+test-utils = ["dep:lance-datagen", "dep:lance-testing"]
 aws = [
     "lance/aws",
     "lance-io/aws",
